@@ -12,12 +12,14 @@ using Infrastructure.Services.Products;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Newtonsoft.Json;
+using Shop.WebApi.CustomExceptionMiddleware;
 using Shop.WebApi.Filters;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
@@ -85,6 +87,9 @@ namespace Shop.WebApi
                 app.UseDeveloperExceptionPage();
             }
 
+            // custom Exception Middleware
+            app.ConfigureCustomExceptionMiddleware();
+
             // Health check
             app.UseHealthChecks("/status", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions { ResponseWriter = async (context, report) =>
             {
@@ -99,6 +104,7 @@ namespace Shop.WebApi
             }
             });
 
+            app.UseEndpointRouting();
             app.UseMvc();
         }
     }
