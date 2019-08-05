@@ -36,6 +36,10 @@ namespace Infrastructure.Persistence.Migrations
         private static readonly Guid _order4Id = Guid.NewGuid();
         private static readonly Guid _order5Id = Guid.NewGuid();
 
+        // Roles
+        private static readonly Guid _role1Id = Guid.NewGuid();
+        private static readonly Guid _role2Id = Guid.NewGuid();
+
         public static void ProductCategory(MigrationBuilder migrationBuilder) => migrationBuilder.InsertData(
             table: "Productcategories",
             columns: new[] { "Id", "Name", "DisplayName" },
@@ -48,12 +52,12 @@ namespace Infrastructure.Persistence.Migrations
 
         public static void User(MigrationBuilder migrationBuilder) => migrationBuilder.InsertData(
             table: "Users",
-            columns: new[] { "Id", "UserName", "DisplayName"},
+            columns: new[] { "Id", "UserName", "DisplayName", "Password"},
             values: new object[,]
             {
-                {_user1Id, "jemmahahn@gmail.com", "Jemma Hahn"},
-                {_user2Id, "millerhead@gmail.com", "Miller Head"},
-                {_user3Id, "keatonli@gmail.com", "Keaton Li"}
+                {_user1Id, "jemmahahn@gmail.com", "Jemma Hahn", "password"},
+                {_user2Id, "millerhead@gmail.com", "Miller Head", "password"},
+                {_user3Id, "keatonli@gmail.com", "Keaton Li", "password"}
             });
 
         public static void Product(MigrationBuilder migrationBuilder) => migrationBuilder.InsertData(
@@ -104,6 +108,24 @@ namespace Infrastructure.Persistence.Migrations
                 { _order4Id, _product6Id, 10 },
                 { _order5Id, _product7Id, 1 },
                 { _order5Id, _product8Id, 1 }
+            });
+
+        public static void Role(MigrationBuilder migrationBuilder) => migrationBuilder.InsertData(
+            table: "Roles",
+            columns: new[] { "Id", "Name", "DisplayName" },
+            values: new object[,] {
+                { _role1Id, "ADMIN", "Super User" },
+                { _role2Id, "USER", "User"}
+            });
+
+        public static void UserRole(MigrationBuilder migrationBuilder) => migrationBuilder.InsertData(
+            table: "UserRoles",
+            columns: new[] { "UserId", "RoleId"},
+            values: new object[,] {
+                { _user1Id, _role1Id},
+                { _user1Id, _role2Id},
+                { _user2Id, _role2Id},
+                { _user3Id, _role1Id}
             });
 
         public static void All(MigrationBuilder migrationBuilder)

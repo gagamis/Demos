@@ -2,6 +2,7 @@
 using Core.Interfaces.Result;
 using Core.Interfaces.Result.Product;
 using Infrastructure.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Shop.WebApi.Controllers
 {
-
+    [Authorize(Roles = "User")]
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
@@ -55,6 +56,7 @@ namespace Shop.WebApi.Controllers
         /// <param name="queryObject"></param>
         /// <returns>Id of added product</returns>
         [HttpPost()]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AddProductAsync([FromBody]AddProductRequest queryObject)
@@ -76,6 +78,7 @@ namespace Shop.WebApi.Controllers
         /// <param name="productId"></param>
         /// <returns>IsSuccess</returns>
         [HttpDelete()]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RemoveProductAsync([FromQuery]Guid? productId)

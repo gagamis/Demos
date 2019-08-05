@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Core.Configurations;
 using Core.Interfaces.Repository;
 using Core.Interfaces.Repository.Products;
 using Core.Interfaces.Repository.Users;
@@ -9,9 +10,13 @@ using Infrastructure.Repositories.Users;
 using Infrastructure.Services.Interfaces;
 using Infrastructure.Services.Mappings;
 using Infrastructure.Services.Products;
+using Infrastructure.Services.Tokens;
+using Infrastructure.Services.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +25,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Newtonsoft.Json;
 using Shop.WebApi.CustomExceptionMiddleware;
+using Shop.WebApi.Extensions;
 using Shop.WebApi.Filters;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
@@ -40,37 +46,20 @@ namespace Shop.WebApi
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
-            // DbContext
-            services.AddDbContext<ShopContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Shop")), ServiceLifetime.Scoped);
+        {        
+            services.SetupAddDbContext(Configuration);
 
-            // Services
-            services.AddTransient<IProductService, ProductService>();
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddTransient<IProductRepository, ProductRepository>();
-            services.AddTransient<IUserRepository, UserRepository>();
+            services.SetupAddServices();
+            services.SetupAddConfigurations(Configuration);
 
-
-            // Auto Mapper Configurations
-            services.AddAutoMapper(typeof(ProductMappingProfile), typeof(ProductCategoryMappingProfile));
-
-            // Health check
-            services.AddHealthChecks();
-
+            services.AddCors();
             services.AddMvc(options =>
             {
                 options.Filters.Add<ApiExceptionFilter>();               // filter for exception logging
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info
-                {
-                    Version = "v1",
-                    Title = "Test API",
-                    Description = "Shop demo Web API"
-                });
-            });
+            services.SetupAddAuthorization();
+            services.SetupAddSwagger();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -104,7 +93,15 @@ namespace Shop.WebApi
             }
             });
 
+            app.UseCors(x => x
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+
+            app.UseAuthentication();
+
             app.UseEndpointRouting();
+
             app.UseMvc();
         }
     }

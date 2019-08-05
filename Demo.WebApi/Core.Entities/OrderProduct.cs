@@ -19,7 +19,14 @@ namespace Core.Entities
         /// </summary>
         public int Amount { get; set; }
 
+        /// <summary>
+        /// Product
+        /// </summary>
         public virtual Product Product { get; set; }
+
+        /// <summary>
+        /// Order
+        /// </summary>
         public virtual Order Order { get; set; }
     }
 }

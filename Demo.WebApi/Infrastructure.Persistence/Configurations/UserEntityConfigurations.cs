@@ -13,8 +13,8 @@ namespace Infrastructure.Persistence.Configurations
             builder
                 .Property(x => x.Id)
                 .HasDefaultValueSql("newsequentialid()")
-                .IsRequired()
-                .HasColumnName("Id");
+                .HasColumnName("Id")
+                .IsRequired();
 
             builder
                 .Property(x => x.UserName).IsRequired()
@@ -23,9 +23,10 @@ namespace Infrastructure.Persistence.Configurations
                 .IsRequired();
 
             builder
-                .Property(x => x.DisplayName).IsRequired()
+                .Property(x => x.DisplayName)
                 .HasColumnType("nvarchar(512)")
-                .HasColumnName(nameof(User.DisplayName));
+                .HasColumnName(nameof(User.DisplayName))
+                .IsRequired();
         }
     }
 }

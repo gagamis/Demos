@@ -113,7 +113,6 @@ namespace Infrastructure.Persistence.Migrations
                 table: "Products",
                 column: "ProductCategoryId");
 
-            InitialMethods.All(migrationBuilder);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
